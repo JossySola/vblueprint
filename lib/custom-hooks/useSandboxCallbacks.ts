@@ -2,11 +2,16 @@
 import { KeyboardEvent, useRef, useState } from "react";
 import { SHAPE_TYPE } from "../types";
 import { Stage } from "konva/lib/Stage";
+import { useImage } from "react-konva-utils";
 
 export default function useSandboxCallbacks() {
     const nextId = useRef(1);
     const stageRef = useRef<Stage | null>(null);
     const [selectedId, setSelectedId] = useState<string | null>('headline');
+    const [woodImage] = useImage("Wood.jpg");
+    const [asphaltImage] = useImage("Asphalt.jpg");
+    const [brickImage] = useImage("Brick.jpg");
+    const [steelImage] = useImage("matte-brushed-steel.webp");
     const [history, setHistory] = useState<{ past: SHAPE_TYPE[][]; present: SHAPE_TYPE[]; future: SHAPE_TYPE[][] }>({
         past: [],
         present: [],
@@ -31,13 +36,20 @@ export default function useSandboxCallbacks() {
         commit(history.present.filter((shape) => shape.id !== selectedId));
         setSelectedId(null);
     };
-    const addShape = (type: "rect" | "circle" | "text") => {
+    const addShape = (type: "rect" | "circle" | "text" | "table" | "wall" | "outfit" | "wood" | "asphalt" | "brick" | "steel") => {
         const id = `${type}-${nextId.current++}`;
         const offset = history.present.length * 14;
         const presets = {
-        rect: { type: 'rect' as const, width: 150, height: 100, fill: '#10b981', cornerRadius: 10 },
-        circle: { type: 'circle' as const, radius: 52, fill: '#8b5cf6' },
-        text: { type: 'text' as const, text: 'Double-click to retype', fontSize: 24, fill: '#0f172a' },
+            rect: { type: 'rect' as const, width: 150, height: 100, fill: '#10b981', cornerRadius: 10 },
+            circle: { type: 'circle' as const, radius: 52, fill: '#8b5cf6' },
+            text: { type: 'text' as const, text: 'Double-click to retype', fontSize: 24, fill: '#0f172a' },
+            outfit: { type: 'outfit' as const, data: "M 0,0 V 50 M 0,25 H 200 M 200,0 V 50", stroke: 'black' },
+            wall: { type: 'wall' as const, width: 150, height: 100, fill: 'gray', cornerRadius: 10 },
+            table: { type: 'table' as const, width: 150, height: 100, fill: 'blue', cornerRadius: 10 },
+            wood: { type: 'wood' as const, width: 150, height: 100, image: woodImage },
+            asphalt: { type: 'asphalt' as const, width: 150, height: 100, image: asphaltImage },
+            brick: { type: 'brick' as const, width: 150, height: 100, image: brickImage },
+            steel: { type: 'steel' as const, width: 150, height: 100, image: steelImage },
         };
         commit([
         ...history.present,
