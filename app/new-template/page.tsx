@@ -1,27 +1,13 @@
 'use client'
-import type { KonvaEventObject, Node, NodeConfig } from "konva/lib/Node";
+import type { KonvaEventObject } from "konva/lib/Node";
 import { useEffect, useRef, useState } from "react";
 import { Group, Layer, Shape, Stage } from "react-konva";
-
-interface SHAPE_OBJ {
-    id: string;
-    type: string;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    fill: string;
-    rotation: number;
-};
-
-type SHAPES = Array<SHAPE_OBJ>;
 
 const spacing = 40;
 const dotRadius = 1;
 const wheelLineHeight = 16; // Approximate pixels per line for line-mode mouse wheels.
 
 export default function NewTemplate() {
-    const [shapes, setShapes] = useState<SHAPES>([]);
     // Camera coordinates describe the world position at the viewport's top-left.
     // Scrolling changes these coordinates, never the size or scale of the Stage.
     const [camera, setCamera] = useState({ x: 0, y: 0 });
@@ -73,48 +59,42 @@ export default function NewTemplate() {
         });
     };
 
-    const handleShapeDragEnd = function(id: string, e: KonvaEventObject<DragEvent, Node<NodeConfig>>) {
-        // Shapes inside the translated Group retain their world coordinates.
-        const position = e.target.position();
-        setShapes(function(currentShapes) {
-            return currentShapes.map(function(shape) {
-                return shape.id === id
-                    ? Object.assign({}, shape, position)
-                    : shape;
-            });
-        });
-    };
     // Wait for the browser measurement before creating the canvas.
     if (!viewport.width || !viewport.height) return null;
 
     return (
-        <Stage width={viewport.width} height={viewport.height} onWheel={handleWheel}>
-            <Layer>
-                <Shape
-                    fill="#ccc"
-                    listening={false}
-                    perfectDrawEnabled={false}
-                    sceneFunc={(context, shape) => {
-                        // Repeat the grid around the camera, including a one-cell margin.
-                        // Negative remainders are intentional: they keep a dot just offscreen.
-                        const startX = (-camera.x % spacing) - spacing;
-                        const startY = (-camera.y % spacing) - spacing;
-                        context.beginPath();
-                        for (let x = startX; x <= viewport.width + spacing; x += spacing) {
-                            for (let y = startY; y <= viewport.height + spacing; y += spacing) {
-                                context.moveTo(x + dotRadius, y);
-                                context.arc(x, y, dotRadius, 0, Math.PI * 2);
+        <section>
+            <Stage 
+            width={viewport.width} 
+            height={viewport.height} 
+            onWheel={handleWheel}>
+                <Layer>
+                    <Shape
+                        fill="#ccc"
+                        listening={false}
+                        perfectDrawEnabled={false}
+                        sceneFunc={(context, shape) => {
+                            // Repeat the grid around the camera, including a one-cell margin.
+                            // Negative remainders are intentional: they keep a dot just offscreen.
+                            const startX = (-camera.x % spacing) - spacing;
+                            const startY = (-camera.y % spacing) - spacing;
+                            context.beginPath();
+                            for (let x = startX; x <= viewport.width + spacing; x += spacing) {
+                                for (let y = startY; y <= viewport.height + spacing; y += spacing) {
+                                    context.moveTo(x + dotRadius, y);
+                                    context.arc(x, y, dotRadius, 0, Math.PI * 2);
+                                }
                             }
-                        }
-                        // One Konva node and one fill operation, regardless of scroll distance.
-                        context.fillStrokeShape(shape);
-                    }}
-                />
-                <Group x={-camera.x} y={-camera.y}>
-                    {/* Render furniture here using its saved world x/y coordinates.
-                        The Group applies the camera offset to every child automatically. */}
-                </Group>
-            </Layer>
-        </Stage>
+                            // One Konva node and one fill operation, regardless of scroll distance.
+                            context.fillStrokeShape(shape);
+                        }}
+                    />
+                    <Group x={-camera.x} y={-camera.y} >
+                        {/* Render furniture here using its saved world x/y coordinates.
+                            The Group applies the camera offset to every child automatically. */}
+                    </Group>
+                </Layer>
+            </Stage>
+        </section>
     )
 }
