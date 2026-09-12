@@ -37,14 +37,21 @@ export default function useEditableShapeCallbacks(
 
         const base = { x: node.x(), y: node.y(), rotation: node.rotation() };
 
-        if (shape.type === 'rect') {
+        if (shape.type === 'rect' 
+            || shape.type === 'table' 
+            || shape.type === 'wall'
+            || shape.type === 'wood'
+            || shape.type === 'asphalt'
+            || shape.type === 'brick'
+            || shape.type === 'steel'
+        ) {
         onCommit({
             ...shape,
             ...base,
             width: Math.max(20, node.width() * scaleX),
             height: Math.max(20, node.height() * scaleY),
         });
-        } else if (shape.type === 'circle') {
+        } else if (shape.type === 'circle' || shape.type === 'ring') {
         onCommit({ ...shape, ...base, radius: Math.max(10, shape.radius * average) });
         } else if (shape.type === 'star') {
         onCommit({
