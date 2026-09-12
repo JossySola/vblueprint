@@ -2,6 +2,10 @@
 import type { KonvaEventObject } from "konva/lib/Node";
 import { useEffect, useRef, useState } from "react";
 import { Group, Layer, Shape, Stage } from "react-konva";
+import useSandboxCallbacks from "@/lib/custom-hooks/useSandboxCallbacks";
+import EditableShape from "../_components/EditableShape";
+import { SHAPE_TYPE } from "@/lib/types";
+import { Html } from "react-konva-utils";
 
 const spacing = 40;
 const dotRadius = 1;
@@ -15,6 +19,17 @@ export default function NewTemplate() {
     const scrollFrame = useRef<number | null>(null);
     // Start with the same dimensions on the server and during hydration.
     const [viewport, setViewport] = useState({ width: 0, height: 0 });
+    const {
+        setSelectedId,
+        updateShape,
+        handleStageKeyDown,
+        stageRef,
+        history,
+        selectedId,
+        addShape,
+        redo,
+        undo,
+    } = useSandboxCallbacks();
 
     useEffect(() => {
         // Effects only run in the browser, where `window` is available.
@@ -63,11 +78,30 @@ export default function NewTemplate() {
     if (!viewport.width || !viewport.height) return null;
 
     return (
-        <section>
+        <section
+        tabIndex={0}
+        role="group"
+        aria-label="Design canvas. Press Delete to remove the selected shape."
+        onPointerDownCapture={(event) => event.currentTarget.focus({ preventScroll: true })}
+        onKeyDown={handleStageKeyDown}>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+                <button onClick={() => addShape('rect')}>Add rectangle</button>
+                <button onClick={() => addShape('circle')}>Add circle</button>
+                <button onClick={() => addShape('text')}>Add text</button>
+                <button onClick={undo} disabled={history.past.length === 0}>Undo</button>
+                <button onClick={redo} disabled={history.future.length === 0}>Redo</button>
+            </div>
             <Stage 
+            ref={stageRef}
             width={viewport.width} 
             height={viewport.height} 
-            onWheel={handleWheel}>
+            onWheel={handleWheel}
+            onMouseDown={(e) => {
+                if (e.target === e.target.getStage()) setSelectedId(null);
+            }}
+            onTouchStart={(e) => {
+                if (e.target === e.target.getStage()) setSelectedId(null);
+            }}>
                 <Layer>
                     <Shape
                         fill="#ccc"
@@ -92,6 +126,33 @@ export default function NewTemplate() {
                     <Group x={-camera.x} y={-camera.y} >
                         {/* Render furniture here using its saved world x/y coordinates.
                             The Group applies the camera offset to every child automatically. */}
+                        {history.present.map((shape: SHAPE_TYPE) => (
+                        <EditableShape
+                            key={shape.id}
+                            shape={shape}
+                            selected={shape.id === selectedId}
+                            onSelect={() => setSelectedId(shape.id)}
+                            onCommit={updateShape}
+                        />
+                        ))}
+                        <Html>
+                            {/* Canvas pixels mean nothing to a screen reader. Mirror the document in HTML. */}
+                            <p style={{ marginTop: 12, marginBottom: 6 }}>Objects:</p>
+                            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                                {history.present.map((shape: SHAPE_TYPE) => (
+                                <button
+                                key={shape.id}
+                                style={{
+                                    borderColor: shape.id === selectedId ? '#2563eb' : '#cbd5e1',
+                                }}
+                                aria-pressed={shape.id === selectedId}
+                                onClick={() => setSelectedId(shape.id)}
+                                >
+                                    {shape.id}
+                                </button>
+                                ))}
+                            </div>
+                        </Html>
                     </Group>
                 </Layer>
             </Stage>
