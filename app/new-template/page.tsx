@@ -85,9 +85,14 @@ export default function NewTemplate() {
         onPointerDownCapture={(event) => event.currentTarget.focus({ preventScroll: true })}
         onKeyDown={handleStageKeyDown}>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
-                <button onClick={() => addShape('rect')}>Add rectangle</button>
-                <button onClick={() => addShape('circle')}>Add circle</button>
-                <button onClick={() => addShape('text')}>Add text</button>
+                <button onClick={() => addShape('wall')}>Add wall</button>
+                <button onClick={() => addShape('table')}>Add table</button>
+                <button onClick={() => addShape('wood')}>Add wood</button>
+                <button onClick={() => addShape('asphalt')}>Add asphalt</button>
+                <button onClick={() => addShape('brick')}>Add brick</button>
+                <button onClick={() => addShape('outfit')}>Add outfit</button>
+                <button onClick={() => addShape('brickslight')}>Add light bricks</button>
+                <button onClick={() => addShape('terrazzo')}>Add terrazzo</button>
                 <button onClick={undo} disabled={history.past.length === 0}>Undo</button>
                 <button onClick={redo} disabled={history.future.length === 0}>Redo</button>
             </div>
