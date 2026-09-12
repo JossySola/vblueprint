@@ -11,6 +11,8 @@ export default function useSandboxCallbacks() {
     const [woodImage] = useImage("Wood.jpg");
     const [asphaltImage] = useImage("Asphalt.jpg");
     const [brickImage] = useImage("Brick.jpg");
+    const [brickslight] = useImage("BricksLight.png");
+    const [terrazzo] = useImage("Terrazzo.png");
     const [steelImage] = useImage("matte-brushed-steel.webp");
     const [history, setHistory] = useState<{ past: SHAPE_TYPE[][]; present: SHAPE_TYPE[]; future: SHAPE_TYPE[][] }>({
         past: [],
@@ -36,20 +38,35 @@ export default function useSandboxCallbacks() {
         commit(history.present.filter((shape) => shape.id !== selectedId));
         setSelectedId(null);
     };
-    const addShape = (type: "rect" | "circle" | "text" | "table" | "wall" | "outfit" | "wood" | "asphalt" | "brick" | "steel") => {
+    const addShape = (type: 
+        "rect" 
+        | "circle" 
+        | "text" 
+        | "table" 
+        | "wall" 
+        | "outfit" 
+        | "wood" 
+        | "asphalt" 
+        | "brick" 
+        | "steel"
+        | "brickslight"
+        | "terrazzo"
+    ) => {
         const id = `${type}-${nextId.current++}`;
         const offset = history.present.length * 14;
         const presets = {
             rect: { type: 'rect' as const, width: 150, height: 100, fill: '#10b981', cornerRadius: 10 },
-            circle: { type: 'circle' as const, radius: 52, fill: '#8b5cf6' },
+            circle: { type: 'circle' as const, radius: 52, fill: 'gray' },
             text: { type: 'text' as const, text: 'Double-click to retype', fontSize: 24, fill: '#0f172a' },
             outfit: { type: 'outfit' as const, data: "M 0,0 V 50 M 0,25 H 200 M 200,0 V 50", stroke: 'black' },
-            wall: { type: 'wall' as const, width: 150, height: 100, fill: 'gray', cornerRadius: 10 },
+            wall: { type: 'wall' as const, width: 150, height: 100, fill: '#CBCBCB', cornerRadius: 10 },
             table: { type: 'table' as const, width: 150, height: 100, fill: 'blue', cornerRadius: 10 },
             wood: { type: 'wood' as const, width: 150, height: 100, image: woodImage },
             asphalt: { type: 'asphalt' as const, width: 150, height: 100, image: asphaltImage },
             brick: { type: 'brick' as const, width: 150, height: 100, image: brickImage },
             steel: { type: 'steel' as const, width: 150, height: 100, image: steelImage },
+            brickslight: { type: 'brickslight' as const, width: 150, height: 100, image: brickslight },
+            terrazzo: { type: 'terrazzo' as const, width: 150, height: 100, image: terrazzo },
         };
         commit([
         ...history.present,

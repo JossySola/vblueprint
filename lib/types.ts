@@ -57,4 +57,25 @@ interface Steel extends ImageConfig {
     type: "steel";
     image: CanvasImageSource | undefined;
 }
-export type SHAPE_TYPE = ShapeData & (Rect | Circle | Star | Text | Ring | Path | Wood | Asphalt | Brick | Steel);
+interface BricksLight extends ImageConfig {
+    type: "brickslight";
+    image: CanvasImageSource | undefined;
+}
+interface Terrazzo extends ImageConfig {
+    type: "terrazzo";
+    image: CanvasImageSource | undefined;
+}
+export type SHAPE_TYPE = ShapeData & (
+    Rect 
+    | Circle 
+    | Star 
+    | Text 
+    | Ring 
+    | Path 
+    | Wood 
+    | Asphalt 
+    | Brick 
+    | Steel
+    | BricksLight
+    | Terrazzo
+);
