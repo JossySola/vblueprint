@@ -1,0 +1,79 @@
+'use client'
+import { KeyboardEvent, useRef, useState } from "react";
+import { SHAPE_TYPE } from "../types";
+import { Stage } from "konva/lib/Stage";
+
+export default function useSandboxCallbacks() {
+    const nextId = useRef(1);
+    const stageRef = useRef<Stage | null>(null);
+    const [selectedId, setSelectedId] = useState<string | null>('headline');
+    const [history, setHistory] = useState<{ past: SHAPE_TYPE[][]; present: SHAPE_TYPE[]; future: SHAPE_TYPE[][] }>({
+        past: [],
+        present: [],
+        future: [],
+    });
+
+  // One history entry per finished action — never one per pointer move.
+     const commit = (nextShapes: SHAPE_TYPE[]) =>
+        setHistory((current) => ({
+        past: [...current.past, current.present],
+        present: nextShapes,
+        future: [],
+    }));
+    const updateShape = (next: SHAPE_TYPE) => commit(history.present.map((s) => (s.id === next.id ? next : s)));
+    const handleStageKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        if (event.key !== 'Delete' || event.repeat || selectedId === null) return;
+        // Keep keyboard shortcuts scoped to the canvas, away from text inputs.
+        if (event.target !== event.currentTarget) return;
+        if (!history.present.some((shape) => shape.id === selectedId)) return;
+
+        event.preventDefault();
+        commit(history.present.filter((shape) => shape.id !== selectedId));
+        setSelectedId(null);
+    };
+    const addShape = (type: "rect" | "circle" | "text") => {
+        const id = `${type}-${nextId.current++}`;
+        const offset = history.present.length * 14;
+        const presets = {
+        rect: { type: 'rect' as const, width: 150, height: 100, fill: '#10b981', cornerRadius: 10 },
+        circle: { type: 'circle' as const, radius: 52, fill: '#8b5cf6' },
+        text: { type: 'text' as const, text: 'Double-click to retype', fontSize: 24, fill: '#0f172a' },
+        };
+        commit([
+        ...history.present,
+        { id, x: 160 + offset, y: 150 + offset, ...presets[type] },
+        ]);
+        setSelectedId(id);
+    };
+    const redo = () =>
+        setHistory((c) =>
+        c.future.length === 0
+            ? c
+            : {
+                past: [...c.past, c.present],
+                present: c.future[0],
+                future: c.future.slice(1),
+            }
+    );
+    const undo = () =>
+        setHistory((c) =>
+        c.past.length === 0
+            ? c
+            : {
+                past: c.past.slice(0, -1),
+                present: c.past[c.past.length - 1],
+                future: [c.present, ...c.future],
+            }
+    );
+    return {
+        setSelectedId,
+        updateShape,
+        handleStageKeyDown,
+        stageRef,
+        history,
+        selectedId,
+        addShape,
+        redo,
+        undo,
+    }
+}
