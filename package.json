@@ -11,10 +11,11 @@
   "dependencies": {
     "@neondatabase/auth": "^0.5.0-beta",
     "konva": "^10.3.3",
-    "next": "16.3.4",
+    "next": "^16.3.5",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "react-konva": "^19.2.6"
+    "react-konva": "^19.2.6",
+    "react-konva-utils": "^2.0.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -25,5 +26,8 @@
     "eslint-config-next": "16.3.4",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "allowScripts": {
+    "unrs-resolver@1.12.2": true
   }
 }
