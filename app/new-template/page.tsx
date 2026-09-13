@@ -5,6 +5,7 @@ import { Group, Layer, Line, Shape, Stage } from "react-konva";
 import { getAlignmentGuides, type AlignmentGuide } from "@/lib/alignmentGuides";
 import useSandboxCallbacks from "@/lib/custom-hooks/useSandboxCallbacks";
 import useShapeMenuOptions from "@/lib/custom-hooks/useShapeMenuOptions";
+import useCanvasPixelRatio from "@/lib/custom-hooks/useCanvasPixelRatio";
 import EditableShape from "../_components/EditableShape";
 import { SHAPE_TYPE } from "@/lib/types";
 import { Html } from "react-konva-utils";
@@ -34,6 +35,7 @@ export default function NewTemplate() {
         undo,
         commit,
     } = useSandboxCallbacks();
+    useCanvasPixelRatio(stageRef, viewport.width, viewport.height);
     const { canDuplicate, handleShapeContextMenu, duplicateShape } = useShapeMenuOptions({
         shapes: history.present,
         selectedId,
