@@ -73,6 +73,7 @@ export default function useEditableShapeCallbacks(
     };
 
     const common = {
+        name: 'editable-shape',
         ref: setShapeRef,
         draggable: true,
         onClick: onSelect,

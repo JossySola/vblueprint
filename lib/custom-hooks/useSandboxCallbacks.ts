@@ -59,7 +59,7 @@ export default function useSandboxCallbacks() {
             circle: { type: 'circle' as const, radius: 52, fill: 'gray' },
             text: { type: 'text' as const, text: 'Double-click to retype', fontSize: 24, fill: '#0f172a' },
             outfit: { type: 'outfit' as const, data: "M 0,0 V 50 M 0,25 H 200 M 200,0 V 50", stroke: 'black' },
-            wall: { type: 'wall' as const, width: 150, height: 100, fill: '#CBCBCB', cornerRadius: 10 },
+            wall: { type: 'wall' as const, width: 150, height: 100, fill: '#E1E1E1', cornerRadius: 10 },
             table: { type: 'table' as const, width: 150, height: 100, fill: 'blue', cornerRadius: 10 },
             wood: { type: 'wood' as const, width: 150, height: 100, image: woodImage },
             asphalt: { type: 'asphalt' as const, width: 150, height: 100, image: asphaltImage },
@@ -95,6 +95,7 @@ export default function useSandboxCallbacks() {
             }
     );
     return {
+        commit,
         setSelectedId,
         updateShape,
         handleStageKeyDown,

@@ -1,8 +1,10 @@
 'use client'
 import type { KonvaEventObject } from "konva/lib/Node";
 import { useEffect, useRef, useState } from "react";
-import { Group, Layer, Shape, Stage } from "react-konva";
+import { Group, Layer, Line, Shape, Stage } from "react-konva";
+import { getAlignmentGuides, type AlignmentGuide } from "@/lib/alignmentGuides";
 import useSandboxCallbacks from "@/lib/custom-hooks/useSandboxCallbacks";
+import useShapeMenuOptions from "@/lib/custom-hooks/useShapeMenuOptions";
 import EditableShape from "../_components/EditableShape";
 import { SHAPE_TYPE } from "@/lib/types";
 import { Html } from "react-konva-utils";
@@ -15,6 +17,7 @@ export default function NewTemplate() {
     // Camera coordinates describe the world position at the viewport's top-left.
     // Scrolling changes these coordinates, never the size or scale of the Stage.
     const [camera, setCamera] = useState({ x: 0, y: 0 });
+    const [alignment, setAlignment] = useState<{ id: string; guides: AlignmentGuide[] } | null>(null);
     const pendingScroll = useRef({ x: 0, y: 0 });
     const scrollFrame = useRef<number | null>(null);
     // Start with the same dimensions on the server and during hydration.
@@ -29,7 +32,14 @@ export default function NewTemplate() {
         addShape,
         redo,
         undo,
+        commit,
     } = useSandboxCallbacks();
+    const { canDuplicate, handleShapeContextMenu, duplicateShape } = useShapeMenuOptions({
+        shapes: history.present,
+        selectedId,
+        selectShape: setSelectedId,
+        commit,
+    });
 
     useEffect(() => {
         // Effects only run in the browser, where `window` is available.
@@ -93,6 +103,7 @@ export default function NewTemplate() {
                 <button onClick={() => addShape('outfit')}>Add outfit</button>
                 <button onClick={() => addShape('brickslight')}>Add light bricks</button>
                 <button onClick={() => addShape('terrazzo')}>Add terrazzo</button>
+                <button onClick={duplicateShape} disabled={!canDuplicate}>Duplicate</button>
                 <button onClick={undo} disabled={history.past.length === 0}>Undo</button>
                 <button onClick={redo} disabled={history.future.length === 0}>Redo</button>
             </div>
@@ -101,6 +112,7 @@ export default function NewTemplate() {
             width={viewport.width} 
             height={viewport.height} 
             onWheel={handleWheel}
+            onContextMenu={handleShapeContextMenu}
             onMouseDown={(e) => {
                 if (e.target === e.target.getStage()) setSelectedId(null);
             }}
@@ -128,7 +140,29 @@ export default function NewTemplate() {
                             context.fillStrokeShape(shape);
                         }}
                     />
-                    <Group x={-camera.x} y={-camera.y} >
+                    <Group
+                        x={-camera.x}
+                        y={-camera.y}
+                        onDragStart={(event) => {
+                            if (event.target.hasName('editable-shape')) {
+                                setSelectedId(event.target.id());
+                                setAlignment(null);
+                            }
+                        }}
+                        onDragMove={(event) => {
+                            const node = event.target;
+                            const parent = node.getParent();
+                            if (!parent || !node.hasName('editable-shape')) return;
+                            const others = parent.getChildren()
+                                .filter((child) => child !== node && child.hasName('editable-shape') && child.isVisible())
+                                .map((child) => child.getClientRect({ relativeTo: parent, skipShadow: true }));
+                            setAlignment({
+                                id: node.id(),
+                                guides: getAlignmentGuides(node.getClientRect({ relativeTo: parent, skipShadow: true }), others),
+                            });
+                        }}
+                        onDragEnd={() => setAlignment(null)}
+                    >
                         {/* Render furniture here using its saved world x/y coordinates.
                             The Group applies the camera offset to every child automatically. */}
                         {history.present.map((shape: SHAPE_TYPE) => (
@@ -140,6 +174,17 @@ export default function NewTemplate() {
                             onCommit={updateShape}
                         />
                         ))}
+                        {alignment && history.present.some((shape) => shape.id === alignment.id) &&
+                            alignment.guides.map((guide) => (
+                                <Line
+                                    key={`${guide.axis}-${guide.kind}`}
+                                    points={guide.points}
+                                    stroke="#42a5f5"
+                                    strokeWidth={2}
+                                    dash={guide.kind === 'center' ? [2, 4] : [6, 4]}
+                                    listening={false}
+                                />
+                            ))}
                         <Html>
                             {/* Canvas pixels mean nothing to a screen reader. Mirror the document in HTML. */}
                             <p style={{ marginTop: 12, marginBottom: 6 }}>Objects:</p>
