@@ -55,18 +55,18 @@ export default function useSandboxCallbacks() {
         const id = `${type}-${nextId.current++}`;
         const offset = history.present.length * 14;
         const presets = {
-            rect: { type: 'rect' as const, width: 150, height: 100, fill: '#10b981', cornerRadius: 10 },
+            rect: { type: 'rect' as const, width: 100, height: 100, fill: '#10b981', cornerRadius: 10 },
             circle: { type: 'circle' as const, radius: 52, fill: 'gray' },
             text: { type: 'text' as const, text: 'Double-click to retype', fontSize: 24, fill: '#0f172a' },
             outfit: { type: 'outfit' as const, data: "M 0,0 V 50 M 0,25 H 200 M 200,0 V 50", stroke: 'black', strokeWidth: 5 },
-            wall: { type: 'wall' as const, width: 150, height: 100, fill: '#E1E1E1', cornerRadius: 0 },
-            table: { type: 'table' as const, width: 150, height: 100, fill: 'blue', cornerRadius: 10 },
-            wood: { type: 'wood' as const, width: 150, height: 100, image: woodImage },
-            asphalt: { type: 'asphalt' as const, width: 150, height: 100, image: asphaltImage },
-            brick: { type: 'brick' as const, width: 150, height: 100, image: brickImage },
-            steel: { type: 'steel' as const, width: 150, height: 100, image: steelImage },
-            brickslight: { type: 'brickslight' as const, width: 150, height: 100, image: brickslight },
-            terrazzo: { type: 'terrazzo' as const, width: 150, height: 100, image: terrazzo },
+            wall: { type: 'wall' as const, width: 100, height: 100, fill: '#E1E1E1', cornerRadius: 0 },
+            table: { type: 'table' as const, width: 100, height: 100, fill: 'blue', cornerRadius: 10 },
+            wood: { type: 'wood' as const, width: 100, height: 100, image: woodImage },
+            asphalt: { type: 'asphalt' as const, width: 100, height: 100, image: asphaltImage },
+            brick: { type: 'brick' as const, width: 100, height: 100, image: brickImage },
+            steel: { type: 'steel' as const, width: 100, height: 100, image: steelImage },
+            brickslight: { type: 'brickslight' as const, width: 100, height: 100, image: brickslight },
+            terrazzo: { type: 'terrazzo' as const, width: 100, height: 100, image: terrazzo },
         };
         commit([
         ...history.present,
