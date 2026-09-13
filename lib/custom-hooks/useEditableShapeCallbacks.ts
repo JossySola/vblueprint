@@ -51,6 +51,7 @@ export default function useEditableShapeCallbacks(
             || shape.type === 'brick'
             || shape.type === 'steel'
             || shape.type === 'brickslight'
+            || shape.type === 'terrazzo'
         ) {
             onCommit({
                 ...shape,

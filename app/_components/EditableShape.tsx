@@ -13,7 +13,7 @@ export default function EditableShape({ shape, selected, onSelect, onCommit } : 
     let crop;
 
     // Canvas images use a source crop to reproduce centered object-fit: cover.
-    if ((shape.type === 'brickslight' || shape.type === 'brick') && typeof HTMLImageElement !== 'undefined'
+    if ((shape.type === 'brickslight' || shape.type === 'brick' || shape.type === 'asphalt' || shape.type === 'terrazzo' || shape.type === 'wood') && typeof HTMLImageElement !== 'undefined'
         && shape.image instanceof HTMLImageElement) {
         const imageWidth = shape.image.naturalWidth;
         const imageHeight = shape.image.naturalHeight;
