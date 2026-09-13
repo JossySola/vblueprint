@@ -10,7 +10,7 @@ import { SHAPE_TYPE } from "@/lib/types";
 import { Html } from "react-konva-utils";
 
 const spacing = 40;
-const dotRadius = 1;
+const dotRadius = 1.5;
 const wheelLineHeight = 16; // Approximate pixels per line for line-mode mouse wheels.
 
 export default function NewTemplate() {
@@ -121,7 +121,7 @@ export default function NewTemplate() {
             }}>
                 <Layer>
                     <Shape
-                        fill="#ccc"
+                        fill="#b0b0b0a1"
                         listening={false}
                         perfectDrawEnabled={false}
                         sceneFunc={(context, shape) => {
