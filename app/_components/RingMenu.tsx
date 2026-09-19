@@ -1,5 +1,5 @@
 'use client'
-import { useTrail } from "@react-spring/konva";
+import { useSpring } from "@react-spring/konva";
 import React from "react";
 import { Layer, Stage } from "react-konva";
 import AnimatedRingMenuItem from "./AnimatedRingMenuItem";
@@ -28,7 +28,7 @@ export default function RingMenu({
     size = 400,
     innerRadius = 70,
     outerRadius = 180,
-    gap = 3,
+    gap = 0,
 }: RingMenuProps) {
 
     const center = size / 2;
@@ -36,19 +36,18 @@ export default function RingMenu({
     const totalAngle = numItems > 0 ? 360 / numItems : 0;
     const wedgeAngle = totalAngle - gap;
 
-    // Staggered Spring Trail Effect for slices opening sequentially
-    const trail = useTrail(numItems, {
-        from: { scale: 0, rotation: -90, opacity: 0 },
+    // Share one spring so every slice opens together as a single ring.
+    const menuStyle = useSpring({
+        from: { scale: 0, rotation: 0, opacity: 0 },
         to: {
             scale: isOpen ? 1 : 0,
             rotation: isOpen ? 0 : -90,
             opacity: isOpen ? 1 : 0,
         },
         config: {
-            tension: 210,
-            friction: 14, // Controls the spring bounciness
+            tension: 900,
+            friction: 80, // Controls the spring bounciness
         },
-        reverse: !isOpen, // Reverses animation sequences when closing
     });
 
     if (numItems === 0) return null;
@@ -57,10 +56,10 @@ export default function RingMenu({
         <Stage width={size} height={size}>
             <Layer>
                 {
-                    trail.map((style, index) => (
+                    items.map((item, index) => (
                         <AnimatedRingMenuItem 
-                        key={items[index].id}
-                        item={items[index]}
+                        key={item.id}
+                        item={item}
                         index={index}
                         totalAngle={totalAngle}
                         wedgeAngle={wedgeAngle}
@@ -68,7 +67,7 @@ export default function RingMenu({
                         center={center}
                         innerRadius={innerRadius}
                         outerRadius={outerRadius}
-                        trailStyle={style} />
+                        trailStyle={menuStyle} />
                     ))
                 }
             </Layer>

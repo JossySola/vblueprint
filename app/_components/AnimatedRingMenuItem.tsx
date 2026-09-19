@@ -3,10 +3,10 @@ import { useImage } from "react-konva-utils";
 import { RingMenuItem } from "./RingMenu";
 import { useState } from "react";
 import { animated, config, SpringValue, useSpring } from "@react-spring/konva";
-import { Group, Image, Text, Wedge } from "react-konva";
+import { Group, Image, Text, Arc } from "react-konva";
 import type { ReactNode } from "react";
 import type { GroupConfig } from "konva/lib/Group";
-import type { WedgeConfig } from "konva/lib/shapes/Wedge";
+import type { ArcConfig } from "konva/lib/shapes/Arc";
 import type { KonvaNodeEvents } from "react-konva";
 
 interface AnimatedRingItemProps {
@@ -29,13 +29,14 @@ interface AnimatedRingItemProps {
 type MenuGroupProps = Pick<GroupConfig, 'x' | 'y' | 'scaleX' | 'scaleY' | 'rotation' | 'opacity' | 'offset'> & {
     children?: ReactNode;
 };
-type MenuWedgeProps = Pick<WedgeConfig, 'x' | 'y' | 'radius' | 'angle' | 'rotation' | 'fill' | 'stroke' | 'strokeWidth'> &
+type MenuArcProps = Pick<ArcConfig, 'x' | 'y' | 'outerRadius' | 'angle' | 'rotation' | 'fill' | 'stroke' | 'strokeWidth'> &
     Pick<KonvaNodeEvents, 'onClick' | 'onTap' | 'onMouseEnter' | 'onMouseLeave'> & { innerRadius: number };
+
 const AnimatedGroup = animated(function MenuGroup(props: MenuGroupProps) {
     return <Group {...props} />;
 });
-const AnimatedWedge = animated(function MenuWedge(props: MenuWedgeProps) {
-    return <Wedge {...props} />;
+const AnimatedArc = animated(function MenuArc(props: MenuArcProps) {
+    return <Arc {...props} />;
 });
 
 export default function AnimatedRingMenuItem({
@@ -65,7 +66,7 @@ export default function AnimatedRingMenuItem({
 
     //Center coordinate math for placing label/icon
     const labelRadius = (innerRadius + outerRadius) / 2;
-    const midAngleRad = (midAngle * Math.PI) / 100;
+    const midAngleRad = (midAngle * Math.PI) / 180;
     const centerX = center + labelRadius * Math.cos(midAngleRad);
     const centerY = center + labelRadius * Math.sin(midAngleRad);
 
@@ -73,7 +74,7 @@ export default function AnimatedRingMenuItem({
     const spacing = 4;
 
     return (
-        // 1. Group level spring: Handles staggered pop-in, scale, rotation, and fade
+        // Shared menu spring handles scale, rotation, and fade for all slices.
         <AnimatedGroup
         x={center}
         y={center}
@@ -82,10 +83,10 @@ export default function AnimatedRingMenuItem({
         rotation={trailStyle.rotation}
         opacity={trailStyle.opacity}
         offset={{ x: center, y: center }}>
-            <AnimatedWedge
+            <AnimatedArc
             x={center}
             y={center}
-            radius={hoverSpring.outerRadius}
+            outerRadius={hoverSpring.outerRadius}
             innerRadius={hoverSpring.innerRadius}
             angle={wedgeAngle}
             rotation={startAngle}
@@ -135,3 +136,4 @@ export default function AnimatedRingMenuItem({
         </AnimatedGroup>
     )
 }
+
