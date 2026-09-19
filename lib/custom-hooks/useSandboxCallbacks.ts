@@ -8,12 +8,12 @@ export default function useSandboxCallbacks() {
     const nextId = useRef(1);
     const stageRef = useRef<Stage | null>(null);
     const [selectedId, setSelectedId] = useState<string | null>('headline');
-    const [woodImage] = useImage("Wood.jpg");
-    const [asphaltImage] = useImage("Asphalt.jpg");
-    const [brickImage] = useImage("Brick.jpg");
-    const [brickslight] = useImage("BricksLight.png");
-    const [terrazzo] = useImage("Terrazzo.png");
-    const [steelImage] = useImage("matte-brushed-steel.webp");
+    const [woodImage] = useImage("/Wood.jpg");
+    const [asphaltImage] = useImage("/Asphalt.jpg");
+    const [brickImage] = useImage("/Brick.jpg");
+    const [brickslight] = useImage("/BricksLight.png");
+    const [terrazzo] = useImage("/Terrazzo.png");
+    const [steelImage] = useImage("/matte-brushed-steel.webp");
     const [history, setHistory] = useState<{ past: SHAPE_TYPE[][]; present: SHAPE_TYPE[]; future: SHAPE_TYPE[][] }>({
         past: [],
         present: [],
@@ -51,16 +51,16 @@ export default function useSandboxCallbacks() {
         | "steel"
         | "brickslight"
         | "terrazzo"
-    ) => {
+    , position?: { x: number; y: number }) => {
         const id = `${type}-${nextId.current++}`;
         const offset = history.present.length * 14;
         const presets = {
-            rect: { type: 'rect' as const, width: 100, height: 100, fill: '#10b981', cornerRadius: 10 },
+            rect: { type: 'rect' as const, width: 100, height: 100, fill: '#10b981', cornerRadius: 0 },
             circle: { type: 'circle' as const, radius: 52, fill: 'gray' },
             text: { type: 'text' as const, text: 'Double-click to retype', fontSize: 24, fill: '#0f172a' },
             outfit: { type: 'outfit' as const, data: "M 0,0 V 50 M 0,25 H 200 M 200,0 V 50", stroke: 'black', strokeWidth: 5 },
             wall: { type: 'wall' as const, width: 100, height: 100, fill: '#E1E1E1', cornerRadius: 0 },
-            table: { type: 'table' as const, width: 100, height: 100, fill: 'blue', cornerRadius: 10 },
+            table: { type: 'table' as const, width: 100, height: 100, fill: 'gray', cornerRadius: 0 },
             wood: { type: 'wood' as const, width: 100, height: 100, image: woodImage },
             asphalt: { type: 'asphalt' as const, width: 100, height: 100, image: asphaltImage },
             brick: { type: 'brick' as const, width: 100, height: 100, image: brickImage },
@@ -70,7 +70,7 @@ export default function useSandboxCallbacks() {
         };
         commit([
         ...history.present,
-        { id, x: 160 + offset, y: 150 + offset, ...presets[type] },
+        { id, x: position?.x ?? 160 + offset, y: position?.y ?? 150 + offset, ...presets[type] },
         ]);
         setSelectedId(id);
     };
