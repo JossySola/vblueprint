@@ -16,10 +16,11 @@ export async function saveNewLayout(payload: {
     try {
         const sql = neon(process.env.DATABASE_URL!);
         const result = await sql`
-            INSERT INTO vblueprint_layouts (userId, layout)
+            INSERT INTO vblueprint_layouts (userId, title, layout)
             VALUES (
                 ${userId},
-                ${JSON.stringify(payload)}
+                ${payload.title},
+                ${JSON.stringify(payload.data)}
             )
             RETURNING id;
         `;
