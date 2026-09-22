@@ -11,7 +11,7 @@ const OUTER_RADIUS_RATIO = 0.45;
 
 const options = [
     ['wall', 'Add wall'], ['table', 'Add table'], ['wood', 'Add wood'],
-    ['asphalt', 'Add asphalt'], ['brick', 'Add brick'], ['outfit', 'Add outfit\n(ironwork)'],
+    ['asphalt', 'Add asphalt'], ['brick', 'Add brick'], ['keylook', 'Add keylook\n(ironwork)'],
     ['brickslight', 'Add light brick'], ['terrazzo', 'Add terrazzo'],
 ] as const;
 type ShapeOption = typeof options[number][0];

@@ -1,7 +1,7 @@
 'use client'
 import { Group, Layer, Line, Stage } from "react-konva";
 import EditableShape from "./EditableShape";
-import { SHAPE_TYPE } from "@/lib/types";
+import { CAMERA, SHAPE_TYPE, VIEWPORT } from "@/lib/types";
 import { Html } from "react-konva-utils";
 import { AlignmentGuide, getAlignmentGuides } from "@/lib/alignmentGuides";
 import TemplateRingMenu from './TemplateRingMenu';
@@ -10,8 +10,8 @@ import { Stage as StageType } from "konva/lib/Stage";
 import { KonvaEventObject, Node, NodeConfig } from "konva/lib/Node";
 
 export default function Sandbox({ viewport, camera, handleWheel, alignment, setAlignment, updateShape, stageRef, history, addShape, selectedId, setSelectedId, handleShapeContextMenu }: {
-    viewport: { width: number, height: number },
-    camera: { x: number, y: number },
+    viewport: VIEWPORT,
+    camera: CAMERA,
     handleWheel: (e: KonvaEventObject<WheelEvent, Node<NodeConfig>>) => void,
     alignment: { id: string, guides: AlignmentGuide[] } | null,
     setAlignment: Dispatch<SetStateAction<{
@@ -27,7 +27,7 @@ export default function Sandbox({ viewport, camera, handleWheel, alignment, setA
         | "text" 
         | "table" 
         | "wall" 
-        | "outfit" 
+        | "keylook" 
         | "wood" 
         | "asphalt" 
         | "brick" 
