@@ -34,7 +34,7 @@ export default function useEditableShapeCallbacks(
         const scaleY = node.scaleY();
         const base = { x: node.x(), y: node.y(), rotation: node.rotation() };
 
-        if (shape.type === 'outfit' || shape.type === 'path') {
+        if (shape.type === 'keylook' || shape.type === 'path') {
             onCommit({ ...shape, ...base, scaleX, scaleY });
             return;
         }
