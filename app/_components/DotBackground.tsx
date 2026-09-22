@@ -1,11 +1,12 @@
 'use client'
+import { CAMERA, VIEWPORT } from "@/lib/types";
 import React, { RefObject } from "react";
 import { Layer, Shape, Stage } from "react-konva";
 
 export default function DotBackground({ children, viewport, camera, spacing, dotRadius }: { 
     children: React.ReactNode,
-    viewport: { width: number, height: number },
-    camera: { x: number, y: number },
+    viewport: VIEWPORT,
+    camera: CAMERA,
     spacing: RefObject<number>,
     dotRadius: RefObject<number>,
 }) {
@@ -17,7 +18,7 @@ export default function DotBackground({ children, viewport, camera, spacing, dot
         tabIndex={0}
         role="group"
         aria-label="Design canvas."
-        onPointerDownCapture={(event) => event.currentTarget.focus({ preventScroll: true })}>
+        onPointerDownCapture={event => event.currentTarget.focus({ preventScroll: true })}>
             <Stage
             width={viewport.width} 
             height={viewport.height}>
