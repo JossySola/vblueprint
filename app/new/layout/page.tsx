@@ -7,6 +7,8 @@ import { saveNewLayout } from "./actions";
 import useSandboxCallbacks from "@/lib/custom-hooks/useSandboxCallbacks";
 import useShapeMenuOptions from "@/lib/custom-hooks/useShapeMenuOptions";
 import useTemplateCallbacks from "@/lib/custom-hooks/useTemplateCallbacks";
+import { Button, Input } from "@heroui/react";
+import { Copy, FloppyDisk, ArrowUturnCcwLeft, ArrowUturnCwRight } from '@gravity-ui/icons';
 
 export default function NewTemplate() {
     const session = authClient.useSession();
@@ -20,6 +22,7 @@ export default function NewTemplate() {
         stageRef,
         history,
         selectedId,
+        floorLocations,
         addShape,
         redo,
         undo,
@@ -48,7 +51,8 @@ export default function NewTemplate() {
             try {
                 await saveNewLayout({
                     title,
-                    data: history.present
+                    data: history.present,
+                    floorLocations,
                 });
             } catch (e: unknown) {
                 console.error(e);
@@ -61,15 +65,20 @@ export default function NewTemplate() {
         tabIndex={0}
         role="group"
         aria-label="Design canvas. Press Delete to remove the selected shape."
-        onPointerDownCapture={(event) => event.currentTarget.focus({ preventScroll: true })}
+        onPointerDownCapture={event => event.currentTarget.focus({ preventScroll: true })}
         onKeyDown={handleStageKeyDown}>
-            <input placeholder="Enter a title" name="title" value={title} onChange={e => setTitle(e.target.value)} />
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
-                <button onClick={duplicateShape} type="button" disabled={!canDuplicate}>Duplicate</button>
-                <button onClick={undo} type="button" disabled={history.past.length === 0}>Undo</button>
-                <button onClick={redo} type="button" disabled={history.future.length === 0}>Redo</button>
-                <button onClick={handleSaveLayout} type="button" disabled={isSaving || session.isPending || !session.data?.user}>{isSaving ? 'Saving...' : 'Save'}</button>
+            <div className="w-full absolute top-0 flex flex-col items-center gap-3 pt-3 bg-[#fcfcfc03] backdrop-blur-lg z-99">
+                <Input placeholder="Enter a title" name="title" value={title} onChange={e => setTitle(e.target.value)} />
+                <div className="flex gap-5 flex-wrap mb-12">
+                    <Button variant="tertiary" onClick={duplicateShape} type="button" isDisabled={!canDuplicate}><Copy /> Duplicate</Button>
+                    {/* Undo/Redo currently disabled as there is no implementation to also manipulate setFloorLocations */}
+                    <Button variant="tertiary" onClick={undo} type="button" isDisabled={true}><ArrowUturnCcwLeft/> Undo</Button>
+                    <Button variant="tertiary" onClick={redo} type="button" isDisabled={true}><ArrowUturnCwRight /> Redo</Button>
+                    
+                    <Button variant="primary" onClick={handleSaveLayout} type="button" isDisabled={isSaving || session.isPending || !session.data?.user}><FloppyDisk /> {isSaving ? 'Saving...' : 'Save'}</Button>
+                </div>
             </div>
+
             <DotBackground viewport={viewport} camera={camera} spacing={spacing} dotRadius={dotRadius}>
                 <Sandbox
                 viewport={viewport}
