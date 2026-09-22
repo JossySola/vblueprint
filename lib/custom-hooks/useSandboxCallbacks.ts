@@ -1,11 +1,10 @@
 'use client'
 import { KeyboardEvent, useRef, useState } from "react";
-import { SHAPE_TYPE } from "../types";
+import { LocationItems, SHAPE_TYPE } from "../types";
 import { Stage } from "konva/lib/Stage";
 import { useImage } from "react-konva-utils";
 
 export default function useSandboxCallbacks() {
-    const nextId = useRef(1);
     const stageRef = useRef<Stage | null>(null);
     const [selectedId, setSelectedId] = useState<string | null>('headline');
     const [woodImage] = useImage("/Wood.jpg");
@@ -19,6 +18,7 @@ export default function useSandboxCallbacks() {
         present: [],
         future: [],
     });
+    const [floorLocations, setFloorLocations] = useState<LocationItems>(new Map([]));
 
   // One history entry per finished action — never one per pointer move.
      const commit = (nextShapes: SHAPE_TYPE[]) =>
@@ -36,6 +36,14 @@ export default function useSandboxCallbacks() {
 
         event.preventDefault();
         commit(history.present.filter((shape) => shape.id !== selectedId));
+        const shapeExists = history.present.find(shape => shape.id === selectedId);
+        if (shapeExists) {
+            setFloorLocations(prev => {
+                const newState = new Map(Array.from(prev));
+                newState.delete(selectedId);
+                return newState;
+            });
+        }
         setSelectedId(null);
     };
     const addShape = (type: 
@@ -44,7 +52,7 @@ export default function useSandboxCallbacks() {
         | "text" 
         | "table" 
         | "wall" 
-        | "outfit" 
+        | "keylook" 
         | "wood" 
         | "asphalt" 
         | "brick" 
@@ -52,13 +60,20 @@ export default function useSandboxCallbacks() {
         | "brickslight"
         | "terrazzo"
     , position?: { x: number; y: number }) => {
-        const id = `${type}-${nextId.current++}`;
+        const id = crypto.randomUUID().toString();
+        if (type === "keylook") {
+            setFloorLocations(prev => {
+                const newState = new Map(Array.from(prev));
+                newState.set(id, []);
+                return newState;
+            });
+        }
         const offset = history.present.length * 14;
         const presets = {
             rect: { type: 'rect' as const, width: 100, height: 100, fill: '#10b981', cornerRadius: 0 },
             circle: { type: 'circle' as const, radius: 52, fill: 'gray' },
             text: { type: 'text' as const, text: 'Double-click to retype', fontSize: 24, fill: '#0f172a' },
-            outfit: { type: 'outfit' as const, data: "M 0,0 V 50 M 0,25 H 200 M 200,0 V 50", stroke: 'black', strokeWidth: 5 },
+            keylook: { type: 'keylook' as const, data: "M 0,0 V 50 M 0,25 H 200 M 200,0 V 50", stroke: 'black', strokeWidth: 5 },
             wall: { type: 'wall' as const, width: 100, height: 100, fill: '#E1E1E1', cornerRadius: 0 },
             table: { type: 'table' as const, width: 100, height: 100, fill: 'gray', cornerRadius: 0 },
             wood: { type: 'wood' as const, width: 100, height: 100, image: woodImage },
@@ -102,6 +117,7 @@ export default function useSandboxCallbacks() {
         stageRef,
         history,
         selectedId,
+        floorLocations,
         addShape,
         redo,
         undo,
