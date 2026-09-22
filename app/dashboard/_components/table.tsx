@@ -3,7 +3,9 @@ import { DashboardQueryResponse } from "@/lib/types";
 import { Table } from "@heroui/react";
 import Link from "next/link";
 
-export default function DashboardTable(payload: DashboardQueryResponse) {
+export default function DashboardTable({ payload }: {
+    payload: DashboardQueryResponse,
+}) {
     return (
         <Table>
             <Table.ScrollContainer>
