@@ -9,7 +9,7 @@ import { Dispatch, RefObject, SetStateAction } from "react";
 import { Stage as StageType } from "konva/lib/Stage";
 import { KonvaEventObject, Node, NodeConfig } from "konva/lib/Node";
 
-export default function Sandbox({ viewport, camera, handleWheel, alignment, setAlignment, updateShape, stageRef, history, addShape, selectedId, setSelectedId, handleShapeContextMenu }: {
+export default function Sandbox({ viewport, camera, handleWheel, alignment, setAlignment, updateShape, stageRef, history, addShape, selectedId, setSelectedId, handleShapeContextMenu, hasContextTarget, canDuplicate, onDuplicate, onDelete }: {
     viewport: VIEWPORT,
     camera: CAMERA,
     handleWheel: (e: KonvaEventObject<WheelEvent, Node<NodeConfig>>) => void,
@@ -37,13 +37,17 @@ export default function Sandbox({ viewport, camera, handleWheel, alignment, setA
     selectedId: string | null,
     setSelectedId: Dispatch<SetStateAction<string | null>>,
     handleShapeContextMenu: (event: KonvaEventObject<PointerEvent, Node<NodeConfig>>) => void,
+    hasContextTarget: boolean,
+    canDuplicate: boolean,
+    onDuplicate: () => void,
+    onDelete: () => void,
 }) {
 
     // Wait for the browser measurement before creating the canvas.
     if (!viewport.width || !viewport.height) return null;
 
     return (
-        <TemplateRingMenu camera={camera} addShape={addShape}>
+        <TemplateRingMenu camera={camera} addShape={addShape} hasContextTarget={hasContextTarget} canDuplicate={canDuplicate} onDuplicate={onDuplicate} onDelete={onDelete}>
             <Stage 
             ref={stageRef}
             width={viewport.width} 
