@@ -16,10 +16,14 @@ const options = [
 ] as const;
 type ShapeOption = typeof options[number][0];
 
-export default function TemplateRingMenu({ children, camera, addShape }: {
+export default function TemplateRingMenu({ children, camera, addShape, hasContextTarget = false, canDuplicate = false, onDuplicate, onDelete }: {
     children: ReactNode;
     camera: { x: number; y: number };
     addShape: (type: ShapeOption, position?: { x: number; y: number }) => void;
+    hasContextTarget?: boolean;
+    canDuplicate?: boolean;
+    onDuplicate?: () => void;
+    onDelete?: () => void;
 }) {
     const container = useRef<HTMLDivElement>(null);
     const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -59,12 +63,19 @@ export default function TemplateRingMenu({ children, camera, addShape }: {
         });
     };
 
+    const contextItems = hasContextTarget ? [
+        ...(canDuplicate && onDuplicate ? [{ id: 'duplicate', label: 'Duplicate', onClick: () => { onDuplicate(); setMenu(null); } }] : []),
+        ...(onDelete ? [{ id: 'delete', label: 'Delete', onClick: () => { onDelete(); setMenu(null); } }] : []),
+    ] : [];
     const items = submenu ? options.map(([type, label]) => ({
         id: type, label, onClick: () => {
             if (menu) addShape(type, menu.world);
             setMenu(null);
         },
-    })) : [{ id: 'shapes', label: 'Add shapes', onClick: () => setSubmenu(true) }];
+    })) : [
+        ...(contextItems),
+        { id: 'shapes', label: 'Add shapes', onClick: () => setSubmenu(true) },
+    ];
 
     return (
         <Html>
