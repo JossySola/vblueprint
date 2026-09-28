@@ -2,8 +2,7 @@
 import { LocationItems } from "@/lib/types";
 import { ComponentProps, useEffect, useMemo, useState } from "react";
 import { Group, Path } from "react-konva";
-import { Html } from "react-konva-utils";
-import Item from "./Item";
+import KeylookModal from "./KeylookModal";
 
 type PositionProps = ComponentProps<typeof Path> & {
     floorLocations: LocationItems;
@@ -32,27 +31,7 @@ export default function Position({
     return (
         <Group>
             <Path {...props} onClick={() => setIsOpen(true)} />
-            {isOpen && <Html>
-                <div 
-                role="presentation" 
-                onMouseDown={event => { if (event.target === event.currentTarget) setIsOpen(false); }} 
-                className="w-full flex flex-row justify-center items-center text-center ">
-                    <section 
-                    role="dialog" 
-                    aria-modal="true" 
-                    aria-labelledby={`position-title-${shapeId}`}>
-                        <header>
-                            <h2 id={`position-title-${shapeId}`}>Items in this location</h2>
-                            <button type="button" onClick={() => setIsOpen(false)} aria-label="Close location">Close</button>
-                        </header>
-                        <div>
-                            {currentItems.length 
-                            ? currentItems.map(item => <Item key={item.id} {...item} />) 
-                            : <p>No items assigned to this location yet.</p>}
-                        </div>
-                    </section>
-                </div>
-            </Html>}
+            {isOpen && <KeylookModal shapeId={shapeId!} currentItems={currentItems} setIsOpen={setIsOpen} />}
         </Group>
     )
 }
