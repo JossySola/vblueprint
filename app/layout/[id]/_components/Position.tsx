@@ -1,54 +1,58 @@
 'use client'
 import { LocationItems } from "@/lib/types";
-import { Modal, useOverlayState } from "@heroui/react";
-import { ComponentProps, useMemo } from "react";
-import { Path } from "react-konva";
+import { ComponentProps, useEffect, useMemo, useState } from "react";
+import { Group, Path } from "react-konva";
 import { Html } from "react-konva-utils";
 import Item from "./Item";
 
-type PositionProps = ComponentProps<typeof Path>;
+type PositionProps = ComponentProps<typeof Path> & {
+    floorLocations: LocationItems;
+};
 
-export default function Position(
-    props: PositionProps, 
-    floorLocations: LocationItems 
-) {
-    const state = useOverlayState();
+export default function Position({
+    floorLocations,
+    ...props
+}: PositionProps) {
+    const [isOpen, setIsOpen] = useState(false);
     const shapeId = props.id;
     const currentItems = useMemo(() => {
-        if (shapeId) return floorLocations.get(shapeId);
+        if (shapeId) return floorLocations.get(shapeId) ?? [];
+        return [];
     }, [shapeId, floorLocations]);
 
+    useEffect(() => {
+        if (!isOpen) return;
+        const closeOnEscape = (event: KeyboardEvent) => {
+            if (event.key === "Escape") setIsOpen(false);
+        };
+        window.addEventListener("keydown", closeOnEscape);
+        return () => window.removeEventListener("keydown", closeOnEscape);
+    }, [isOpen]);
+
     return (
-        <>
-        <Path {...props} onClick={() => state.open()}/>
-        <Html>
-            <Modal.Backdrop variant="transparent" isOpen={state.isOpen} onOpenChange={state.setOpen}>
-                <Modal.Container placement="bottom" size="cover" scroll="inside">
-                    <Modal.Dialog className="w-full">
-                        <Modal.CloseTrigger />
-                        <Modal.Header>
-                            <Modal.Heading></Modal.Heading>
-                        </Modal.Header>
-                        <Modal.Body>
-                        {
-                            currentItems && currentItems.map(item => (
-                                <Item 
-                                key={item.id}
-                                id={item.id}
-                                icon={item.icon}
-                                garment={item.garment}
-                                material={item.material}
-                                prevLocation={item.prevLocation}
-                                currentLocation={item.currentLocation}
-                                nextLocation={item.nextLocation}
-                                collection={item.collection} />
-                            ))
-                        }
-                        </Modal.Body>
-                    </Modal.Dialog>
-                </Modal.Container>
-            </Modal.Backdrop>
-        </Html>
-        </>
+        <Group>
+            <Path {...props} onClick={() => setIsOpen(true)} />
+            {isOpen && <Html>
+                <div 
+                role="presentation" 
+                onMouseDown={event => { if (event.target === event.currentTarget) setIsOpen(false); }} 
+                className="w-full flex flex-row justify-center items-center text-center ">
+                    <section 
+                    role="dialog" 
+                    aria-modal="true" 
+                    aria-labelledby={`position-title-${shapeId}`}>
+                        <header>
+                            <h2 id={`position-title-${shapeId}`}>Items in this location</h2>
+                            <button type="button" onClick={() => setIsOpen(false)} aria-label="Close location">Close</button>
+                        </header>
+                        <div>
+                            {currentItems.length 
+                            ? currentItems.map(item => <Item key={item.id} {...item} />) 
+                            : <p>No items assigned to this location yet.</p>}
+                        </div>
+                    </section>
+                </div>
+            </Html>}
+        </Group>
     )
 }
