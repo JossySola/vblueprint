@@ -7,7 +7,7 @@ import { saveNewLayout } from "./actions";
 import useSandboxCallbacks from "@/lib/custom-hooks/useSandboxCallbacks";
 import useShapeMenuOptions from "@/lib/custom-hooks/useShapeMenuOptions";
 import useTemplateCallbacks from "@/lib/custom-hooks/useTemplateCallbacks";
-import { Button, Input } from "@heroui/react";
+import { Button, Input, Spinner } from "@heroui/react";
 import { Copy, FloppyDisk, ArrowUturnCcwLeft, ArrowUturnCwRight } from '@gravity-ui/icons';
 
 export default function NewTemplate() {
@@ -39,7 +39,7 @@ export default function NewTemplate() {
         handleWheel,
     } = useTemplateCallbacks();
 
-    const { canDuplicate, handleShapeContextMenu, duplicateShape } = useShapeMenuOptions({
+    const { canDuplicate, hasContextTarget, handleShapeContextMenu, duplicateShape, deleteShape } = useShapeMenuOptions({
         shapes: history.present,
         selectedId,
         selectShape: setSelectedId,
@@ -67,7 +67,7 @@ export default function NewTemplate() {
         aria-label="Design canvas. Press Delete to remove the selected shape."
         onPointerDownCapture={event => event.currentTarget.focus({ preventScroll: true })}
         onKeyDown={handleStageKeyDown}>
-            <div className="w-full absolute top-0 flex flex-col items-center gap-3 pt-3 bg-[#fcfcfc03] backdrop-blur-lg z-99">
+            <div className="w-full absolute top-0 flex flex-col items-center gap-3 pt-3 bg-[#fcfcfc03] backdrop-blur-sm z-99">
                 <Input placeholder="Enter a title" name="title" value={title} onChange={e => setTitle(e.target.value)} />
                 <div className="flex gap-5 flex-wrap mb-12">
                     <Button variant="tertiary" onClick={duplicateShape} type="button" isDisabled={!canDuplicate}><Copy /> Duplicate</Button>
@@ -75,7 +75,18 @@ export default function NewTemplate() {
                     <Button variant="tertiary" onClick={undo} type="button" isDisabled={true}><ArrowUturnCcwLeft/> Undo</Button>
                     <Button variant="tertiary" onClick={redo} type="button" isDisabled={true}><ArrowUturnCwRight /> Redo</Button>
                     
-                    <Button variant="primary" onClick={handleSaveLayout} type="button" isDisabled={isSaving || session.isPending || !session.data?.user}><FloppyDisk /> {isSaving ? 'Saving...' : 'Save'}</Button>
+                    <Button 
+                    isPending={isSaving}
+                    variant="primary" 
+                    onClick={handleSaveLayout} 
+                    type="button" >
+                        {({isPending}) => (
+                            <>
+                                { isPending ? <Spinner color="current" size="sm" /> : <FloppyDisk /> }
+                                Save
+                            </>
+                        )}
+                    </Button>
                 </div>
             </div>
 
@@ -92,7 +103,11 @@ export default function NewTemplate() {
                 addShape={addShape}
                 selectedId={selectedId}
                 setSelectedId={setSelectedId}
-                handleShapeContextMenu={handleShapeContextMenu} />
+                handleShapeContextMenu={handleShapeContextMenu}
+                hasContextTarget={hasContextTarget}
+                canDuplicate={canDuplicate}
+                onDuplicate={duplicateShape}
+                onDelete={deleteShape} />
             </DotBackground>
         </section>
     )
