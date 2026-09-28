@@ -14,37 +14,37 @@ export default function Workboard({ layout, floorLocations, otherLocations, setF
     return (
         <Group>
             {
-                layout && layout.map(shape => {
+                layout && layout.map((shape, index) => {
                     switch (shape.type) {
                         case 'rect':
-                            return <Rect key={`${shape.type}${shape.name}`} {...shape} />
+                            return <Rect key={`${shape.type}${shape.name}${index}`} {...shape} />
                         case 'table':
-                            return <Rect key={`${shape.type}${shape.name}`} {...shape} />
+                            return <Rect key={`${shape.type}${shape.name}${index}`} {...shape} />
                         case 'wall':
-                            return <Rect key={`${shape.type}${shape.name}`} {...shape} />
+                            return <Rect key={`${shape.type}${shape.name}${index}`} {...shape} />
                         case 'circle':
-                            return <Circle key={`${shape.type}${shape.name}`} {...shape} />
+                            return <Circle key={`${shape.type}${shape.name}${index}`} {...shape} />
                         case 'star':
-                            return <Star key={`${shape.type}${shape.name}`} {...shape} />
+                            return <Star key={`${shape.type}${shape.name}${index}`} {...shape} />
                         case 'text':
-                            return <Text key={`${shape.type}${shape.name}`} {...shape} />
+                            return <Text key={`${shape.type}${shape.name}${index}`} {...shape} />
                         case 'path':
-                            return <Path key={`${shape.type}${shape.name}`} {...shape} />
+                            return <Path key={`${shape.type}${shape.name}${index}`} {...shape} />
                         case 'keylook':
-                            return  <Position key={`${shape.type}${shape.name}`} {...shape} floorLocations={floorLocations} />
+                            return  <Position key={`${shape.type}${shape.name}${index}`} {...shape} floorLocations={floorLocations} />
                         case 'wood':
-                            return <Image key={`${shape.type}${shape.name}`} {...shape} alt="Image with design texture representing a piece of furniture in the template" />
+                            return <Image key={`${shape.type}${shape.name}${index}`} {...shape} alt="Image with design texture representing a piece of furniture in the template" />
                         case 'asphalt':
-                            return <Image key={`${shape.type}${shape.name}`} {...shape} alt="Image with design texture representing a piece of furniture in the template" />
+                            return <Image key={`${shape.type}${shape.name}${index}`} {...shape} alt="Image with design texture representing a piece of furniture in the template" />
                         case 'brick':
-                            return <Image key={`${shape.type}${shape.name}`} {...shape} alt="Image with design texture representing a piece of furniture in the template" />
+                            return <Image key={`${shape.type}${shape.name}${index}`} {...shape} alt="Image with design texture representing a piece of furniture in the template" />
                         case 'steel':
-                            return <Image key={`${shape.type}${shape.name}`} {...shape} alt="Image with design texture representing a piece of furniture in the template" />
+                            return <Image key={`${shape.type}${shape.name}${index}`} {...shape} alt="Image with design texture representing a piece of furniture in the template" />
                         case 'brickslight':
-                            return <Image key={`${shape.type}${shape.name}`} {...shape} alt="Image with design texture representing a piece of furniture in the template" />
+                            return <Image key={`${shape.type}${shape.name}${index}`} {...shape} alt="Image with design texture representing a piece of furniture in the template" />
                         case 'terrazzo':
-                            return <Image key={`${shape.type}${shape.name}`} {...shape} alt="Image with design texture representing a piece of furniture in the template" />
-                        default: return <Rect key={`${shape.type}${shape.name}`} {...shape} />          
+                            return <Image key={`${shape.type}${shape.name}${index}`} {...shape} alt="Image with design texture representing a piece of furniture in the template" />
+                        default: return <Rect key={`${shape.type}${shape.name}${index}`} {...shape} />          
                     }
                 })
             }
