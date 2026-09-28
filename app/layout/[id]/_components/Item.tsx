@@ -5,6 +5,7 @@ import { useState } from "react";
 
 export default function Item({ 
     id, 
+    name,
     icon, 
     garment, 
     material, 
