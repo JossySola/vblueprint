@@ -21,6 +21,7 @@ export default function Layout({ layoutId, storedLabels, storedTitle, storedLayo
         dotRadius,
         viewport,
         camera,
+        handleWheel,
     } = useTemplateCallbacks();
 
     const [title, setTitle] = useState<string>(storedTitle);
@@ -30,14 +31,15 @@ export default function Layout({ layoutId, storedLabels, storedTitle, storedLayo
 
     return (
         <>
-        <div className="w-full absolute top-0 flex flex-col items-center gap-3 pt-3 bg-[#fcfcfc03] backdrop-blur-sm z-99">
+        <div className="fixed inset-x-0 top-0 flex flex-col items-center gap-3 pt-3 bg-[#fcfcfc03] backdrop-blur-sm z-99">
             <Input name="Layout name" aria-label="Layout name" placeholder="Layout name" value={title} onChange={event => setTitle(event.target.value)} />
             <NewItemModal layoutId={layoutId} storedLabels={storedLabels} products={products} setProducts={setProducts} />
         </div>
 
-        <DotBackground viewport={viewport} camera={camera} spacing={spacing} dotRadius={dotRadius}>
+        <DotBackground viewport={viewport} camera={camera} spacing={spacing} dotRadius={dotRadius} onWheel={handleWheel}>
             <Workboard 
             layout={storedLayouts}
+            camera={camera}
             floorLocations={floorLocations}
             otherLocations={otherLocations}
             setFloorLocations={setFloorLocations}
