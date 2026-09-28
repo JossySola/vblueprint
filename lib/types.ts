@@ -89,6 +89,7 @@ export interface VIEWPORT {
 };
 export type GarmentType = {
     id: string,
+    name: string,
     icon: string,
     garment: string,
     material: string,
@@ -96,6 +97,12 @@ export type GarmentType = {
     currentLocation: string,
     nextLocation: string,
     collection?: string,
+    categoryIds?: string[],
+};
+export type ProductCategory = {
+    id: string,
+    name: string,
+    color: string,
 };
 export type LocationItems = Map<string, Array<GarmentType>>;
 export type LocationItemsJSON = Array<[string, GarmentType[]]>;
