@@ -40,5 +40,12 @@ export default function useShapeMenuOptions({ shapes, selectedId, selectShape, c
         setTargetId(null);
     };
 
-    return { canDuplicate, handleShapeContextMenu, duplicateShape };
+    const deleteShape = () => {
+        if (!target) return;
+        commit(shapes.filter((shape) => shape.id !== target.id));
+        selectShape('');
+        setTargetId(null);
+    };
+
+    return { canDuplicate, hasContextTarget: target !== undefined, handleShapeContextMenu, duplicateShape, deleteShape };
 }
