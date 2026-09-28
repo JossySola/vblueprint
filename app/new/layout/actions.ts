@@ -18,7 +18,7 @@ export async function saveNewLayout(payload: {
     try {
         const sql = neon(process.env.DATABASE_URL!);
         const result = await sql`
-            INSERT INTO vblueprint_layouts (userId, title, layout, floorLocations)
+            INSERT INTO vblueprint_layouts ("userId", title, layout, "floorLocations")
             VALUES (
                 ${userId},
                 ${payload.title},
