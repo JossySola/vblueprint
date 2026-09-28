@@ -90,8 +90,8 @@ export default function AnimatedRingMenuItem({
             innerRadius={hoverSpring.innerRadius}
             angle={wedgeAngle}
             rotation={startAngle}
-            fill={isHovered ? item.hoverColor || '#3b82f6' : item.color || '#1e293b'}
-            stroke="#0f172a"
+            fill={isHovered ? item.hoverColor || '#308df6da' : item.color || '#2b80e18c'}
+            stroke="transparent"
             strokeWidth={1}
             onClick={item.onClick}
             onTap={item.onClick}
