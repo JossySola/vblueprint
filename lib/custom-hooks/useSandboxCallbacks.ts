@@ -29,9 +29,11 @@ export default function useSandboxCallbacks() {
     }));
     const updateShape = (next: SHAPE_TYPE) => commit(history.present.map((s) => (s.id === next.id ? next : s)));
     const handleStageKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-        if (event.key !== 'Delete' || event.repeat || selectedId === null) return;
-        // Keep keyboard shortcuts scoped to the canvas, away from text inputs.
-        if (event.target !== event.currentTarget) return;
+        if ((event.key !== 'Delete' && event.key !== 'Supr') || event.repeat || selectedId === null) return;
+        // The canvas is wrapped by another focusable section, so the event target
+        // can be a nested element even though the shortcut belongs to the editor.
+        const target = event.target as HTMLElement;
+        if (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON'].includes(target.tagName)) return;
         if (!history.present.some((shape) => shape.id === selectedId)) return;
 
         event.preventDefault();
