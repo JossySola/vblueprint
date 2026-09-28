@@ -11,7 +11,7 @@ export default function DashboardTable({ payload }: {
             <Table.ScrollContainer>
                 <Table.Content aria-label="Dashboard table">
                     <Table.Header>
-                        <Table.Column>Name</Table.Column>
+                        <Table.Column isRowHeader={true}>Name</Table.Column>
                     </Table.Header>
                     <Table.Body>
                         {payload.map(layout => (
